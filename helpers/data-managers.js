@@ -11,7 +11,6 @@ async function CompileAllDecks() {
             if (!res.ok) throw new Error("Deck not found");
             const data = await res.json();
             const deck = CompileDeckInfo(data);
-            console.log("Found deck: " + deck.name);
             return deck;
         })
     );
