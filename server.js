@@ -1,0 +1,29 @@
+import Koa from "koa";
+import fetch from "node-fetch";
+import cors from "koa-cors";
+import Router from "koa-router";
+import CompileAllDecks from "./helpers/data-managers.js";
+
+const app = new Koa();
+const router = new Router();
+
+app.use(cors());
+
+router.get("/decks", async (ctx) => {
+    try {
+        const output = await CompileAllDecks();
+
+        ctx.body = JSON.stringify(output);
+    } catch (err) {
+        ctx.status = 500;
+        ctx.body = { error: err.message };
+    }
+});
+
+app.use(router.routes());
+app.use(router.allowedMethods());
+
+const PORT = 4000;
+app.listen(PORT, () => {
+    console.log(`Koa API running on http://localhost:${PORT}`);
+})
