@@ -2,7 +2,7 @@ import Koa from "koa";
 import fetch from "node-fetch";
 import cors from "koa-cors";
 import Router from "koa-router";
-import CompileAllDecks from "./helpers/data-managers.js";
+import CompileAllDecks from "./helpers/data-managers.ts";
 
 const app = new Koa();
 const router = new Router();
@@ -13,10 +13,16 @@ router.get("/decks", async (ctx) => {
     try {
         const output = await CompileAllDecks();
 
-        ctx.body = JSON.stringify(output);
-    } catch (err) {
+        ctx.body = output;
+    } catch (err: unknown) {
         ctx.status = 500;
-        ctx.body = { error: err.message };
+
+        if (err instanceof Error) {
+            ctx.body = { error: err.message };
+        } else {
+            ctx.body = { error: "Unknown error occurred" };
+        }
+
     }
 });
 

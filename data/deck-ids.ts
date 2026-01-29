@@ -1,5 +1,5 @@
 // My Archidekt deck IDs
-export const deckIds = [
+export const DECK_IDS = [
     17743924,
     17923011,
     17944833,
