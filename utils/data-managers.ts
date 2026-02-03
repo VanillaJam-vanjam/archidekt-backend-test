@@ -96,6 +96,6 @@ function GetSaltScore(cards: CardDataType[]) {
     return totalSalt.toFixed(1);
 }
 
-function GetImageLink(data: any) {
+function GetImageLink(data: ArchidektApiDataType) {
     return data.featured;
 }

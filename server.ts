@@ -2,7 +2,7 @@ import Koa from "koa";
 import fetch from "node-fetch";
 import cors from "koa-cors";
 import Router from "koa-router";
-import CompileAllDecks from "./helpers/data-managers.ts";
+import CompileAllDecks from "./utils/data-managers.ts";
 
 const app = new Koa();
 const router = new Router();
