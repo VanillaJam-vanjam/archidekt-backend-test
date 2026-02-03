@@ -1,22 +1,12 @@
 import { DECK_IDS } from "../data/deck-ids.ts";
-
-type DeckData = {
-    name: any;
-    commander: any;
-    colors: string;
-    cards: number;
-    salt: string;
-    links: {
-        deckLink: string;
-        imageLink: any;
-    };
-}
+import type { CompiledDeckData } from "../types/types-compiled-deck.ts"
+import type { ArchidektApiDataType, CardDataType, CardType } from "../types/types-archidekt-api.ts"
 
 /**
  * Fetches and compiles all decks from the Archidekt API.
  * @returns A promise that resolves to an array of compiled deck objects.
  */
-export default async function CompileAllDecks(): Promise<DeckData[]> {
+export default async function CompileAllDecks(): Promise<CompiledDeckData[]> {
     const allDecks = await Promise.all(
         DECK_IDS.map(async id => {
             const res = await fetch(`http://archidekt.com/api/decks/${id}/`);
@@ -34,13 +24,13 @@ export default async function CompileAllDecks(): Promise<DeckData[]> {
  * @param {*} data The API data
  * @returns A compiled deck object
  */
-function CompileDeckInfo(data: any) {
+function CompileDeckInfo(data: ArchidektApiDataType) {
     const cardList = data.cards;
     const commanderCard = GetCommanderCard(cardList);
     return {
-        name: GetName(data),
+        name: GetDeckName(data),
         commander: commanderCard ? commanderCard.card.oracleCard.name : "None",
-        colors: GetColorIdentity(commanderCard),
+        colors: commanderCard ? GetColorIdentity(commanderCard) : "Colorless",
         cards: GetCardCount(cardList),
         salt: GetSaltScore(cardList),
         links:{
@@ -50,11 +40,11 @@ function CompileDeckInfo(data: any) {
     };
 }
 
-function GetName(data: any) {
+function GetDeckName(data: ArchidektApiDataType) {
     return data.name;
 }
 
-function GetCommanderCard(cards: any) {
+function GetCommanderCard(cards: CardDataType[]) {
     return cards.find((card: { categories: string[]; }) =>
         card?.categories?.some((category: string) => category === "Commander")
     );
@@ -63,7 +53,7 @@ function GetCommanderCard(cards: any) {
 /**
  * Computes the color identity of the commander card into MTG's format
  */
-function GetColorIdentity(commanderCard: any) {
+function GetColorIdentity(commanderCard: CardDataType) {
     let colorIdentity = "";
     commanderCard.card.oracleCard.colorIdentity.forEach((color: string) => {
         colorIdentity += GetColorLetter(color);
@@ -90,7 +80,7 @@ function GetColorIdentity(commanderCard: any) {
     };
 }
 
-function GetCardCount(cards: any) {
+function GetCardCount(cards: CardDataType[]) {
     let cardCount = 0;
     cards.forEach((card: { quantity: number; }) => {
         cardCount += card.quantity;
@@ -98,7 +88,7 @@ function GetCardCount(cards: any) {
     return cardCount;
 }
 
-function GetSaltScore(cards: any) {
+function GetSaltScore(cards: CardDataType[]) {
     let totalSalt = 0;
     cards.forEach((card: { card: { oracleCard: { salt: number; }; }; quantity: number; }) => {
         totalSalt += card.card.oracleCard.salt * card.quantity;

@@ -6,7 +6,7 @@ This React project creates a local Koa server to compile a json of relevant info
 
 ## How it's made
 
-**Tech used:** JavaScript, Koa
+**Tech used:** TypeScript, Koa
 
 This project was used out of my newfound passion to create automation based on websites' generated API data. Combined with my other passion with MTG and card games in general, I created this project as a tutorial for myself to understand full-stack development.
 
